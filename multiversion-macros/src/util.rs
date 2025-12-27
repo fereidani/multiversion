@@ -1,4 +1,4 @@
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
     parse_quote, spanned::Spanned, visit::Visit, visit_mut::VisitMut, BareFnArg, Error, Expr,
@@ -131,6 +131,5 @@ pub(crate) fn fn_params(sig: &Signature) -> Vec<Ident> {
 }
 
 pub(crate) fn await_tokens() -> TokenStream {
-    let kw = Ident::new("await", Span::call_site());
-    quote! { .#kw }
+    quote! { .await }
 }
