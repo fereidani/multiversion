@@ -4,16 +4,10 @@ fn main() {
     // rustflags, since they shouldn't be the default for any target.
     let rustflags = std::env::var("CARGO_ENCODED_RUSTFLAGS").unwrap();
     let retpolines_enabled = rustflags.split('\x1f').any(|flag| {
-        let features = flag
-            .strip_prefix("target-feature=")
-            .or(flag.strip_prefix("-Ctarget-feature="));
-        if let Some(features) = features {
-            features
-                .split(',')
-                .any(|feature| feature.starts_with("+retpoline"))
-        } else {
-            false
-        }
+        flag.strip_prefix("target-feature=")
+            .or_else(|| flag.strip_prefix("-Ctarget-feature="))
+            .map(|features| features.split(',').any(|f| f.starts_with("+retpoline")))
+            .unwrap_or(false)
     });
 
     if retpolines_enabled {
