@@ -28,7 +28,12 @@ fn transform_recursive(features: &[&str], input: Meta) -> Result<Meta> {
 }
 
 pub(crate) fn transform(mut input: Punctuated<Meta, Comma>) -> Result<Meta> {
-    assert_eq!(input.len(), 2);
+    if input.len() != 2 {
+        return Err(syn::Error::new_spanned(
+            input,
+            "expected exactly two arguments: `target_features = \"...\"` and a cfg expression",
+        ));
+    }
 
     let features = if let Expr::Lit(features) = &input[0].require_name_value()?.value {
         if let Lit::Str(features) = &features.lit {
